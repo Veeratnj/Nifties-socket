@@ -67,7 +67,7 @@ def insert_ohlc_data_api(symbol, timeframe, timestamp, open, high, low, close, v
     Insert OHLC historical data via API endpoint.
     
     Args:
-        symbol (str): Symbol name (e.g., "NIFTY")
+        symbol (str): Symbol name (e.g., "25")
         timeframe (str): Timeframe interval (e.g., "5_MIN")
         timestamp (str): Timestamp in ISO format (e.g., "2025-11-25T13:00:00")
         open (float): Opening price
