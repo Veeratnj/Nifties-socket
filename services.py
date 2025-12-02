@@ -117,17 +117,10 @@ def insert_spot_ltp_api(token, timestamp, ltp):
         dict: Response from the API or error information
     """
     try:
-        # Extract trade_date from timestamp (YYYY-MM-DD format)
-        if isinstance(timestamp, str):
-            trade_date = timestamp.split('T')[0] if 'T' in timestamp else timestamp.split(' ')[0]
-        else:
-            trade_date = datetime.now().strftime('%Y-%m-%d')
-        
         response = requests.post(
             f"{BASE_URL}/api/tick/insert-spot-ltp",
             json={
-                "symbol_id": int(token),  # API expects symbol_id as integer
-                "trade_date": trade_date,  # API expects trade_date in YYYY-MM-DD format
+                "token": str(token),
                 "timestamp": timestamp,
                 "ltp": float(ltp)
             }
@@ -141,3 +134,8 @@ def insert_spot_ltp_api(token, timestamp, ltp):
     except Exception as e:
         print(f"❌ Error inserting spot LTP: {e}")
         return {"error": str(e)}
+
+
+
+if __name__ == "__main__":
+    insert_spot_ltp_api("25", "2025-11-25T13:00:00", 20000)

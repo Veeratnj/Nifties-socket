@@ -8,7 +8,7 @@ import pytz
 ist = pytz.timezone("Asia/Kolkata")
 
 client_id = '1100465668'
-access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY0MjYzODUzLCJpYXQiOjE3NjQxNzc0NTMsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.q3iKIcAa9PlBfwzyr-bHhvDIdqXMOW5RR9o9tNCRjMbzi1iER8ptMSpVGY-x89bENt5dfDotncLbIiwt9O3RlA"
+access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY0NjkyNDYzLCJpYXQiOjE3NjQ2MDYwNjMsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.j68wnGI1p-e_2QOuZ4RuOk349j4IQpzqySGfTY-T7mB2Txwl2pAUUAdEy4kkq4epSkF2prUgaTQ4FI7YXIBsKg"
 
 dhan_context = DhanContext(client_id, access_token)
 
@@ -48,7 +48,7 @@ while True:
         while True:
 
             now_ist = datetime.now(ist)
-            start_time = now_ist.replace(hour=9, minute=15, second=0, microsecond=0)
+            start_time = now_ist.replace(hour=8, minute=15, second=0, microsecond=0)
             end_time = now_ist.replace(hour=15, minute=30, second=0, microsecond=0)
 
             print(now_ist)
