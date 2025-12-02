@@ -104,7 +104,7 @@ def insert_ohlc_data_api(symbol, timeframe, timestamp, open, high, low, close, v
         return {"error": str(e)}
 
 
-def insert_spot_ltp_api(token, timestamp, ltp):
+def insert_spot_ltp_api_old(token, timestamp, ltp):
     """
     Insert spot LTP (Last Traded Price) data via API endpoint.
     
@@ -117,6 +117,7 @@ def insert_spot_ltp_api(token, timestamp, ltp):
         dict: Response from the API or error information
     """
     try:
+        print(f"Inserting spot LTP for token {token} at {timestamp}")
         response = requests.post(
             f"{BASE_URL}/api/tick/insert-spot-ltp",
             json={
@@ -126,11 +127,50 @@ def insert_spot_ltp_api(token, timestamp, ltp):
             }
         )
         if response.status_code in [200, 201]:
-            print(f"✅ Spot LTP inserted successfully for token {token}")
+            # print(f"✅ Spot LTP inserted successfully for token {token}")
             return response.json()
         else:
             print(f"❌ Failed to insert spot LTP: {response.text}")
             return {"error": response.text, "status_code": response.status_code}
+    except Exception as e:
+        print(f"❌ Error inserting spot LTP: {e}")
+        return {"error": str(e)}
+
+
+
+from datetime import datetime
+
+def insert_spot_ltp_api(token, timestamp, ltp):
+    """
+    Insert spot LTP (Last Traded Price) data via API endpoint.
+    
+    Args:
+        token (str): Token
+        timestamp (str | datetime): Timestamp, ISO format required
+        ltp (float): LTP value
+    """
+    try:
+        # Convert datetime → ISO string if user passes datetime
+        if isinstance(timestamp, datetime):
+            timestamp = timestamp.isoformat()
+
+        print(f"Inserting spot LTP for token {token} at {timestamp}")
+
+        response = requests.post(
+            f"{BASE_URL}/api/tick/insert-spot-ltp",
+            json={
+                "token": str(token),
+                "timestamp": str(timestamp),  # Force string
+                "ltp": float(ltp)
+            }
+        )
+
+        if response.status_code in [200, 201]:
+            return response.json()
+        else:
+            print(f"❌ Failed to insert spot LTP: {response.text}")
+            return {"error": response.text, "status_code": response.status_code}
+
     except Exception as e:
         print(f"❌ Error inserting spot LTP: {e}")
         return {"error": str(e)}

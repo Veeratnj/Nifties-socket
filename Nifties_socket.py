@@ -48,10 +48,10 @@ while True:
         while True:
 
             now_ist = datetime.now(ist)
-            start_time = now_ist.replace(hour=8, minute=15, second=0, microsecond=0)
+            start_time = now_ist.replace(hour=9, minute=15, second=0, microsecond=0)
             end_time = now_ist.replace(hour=15, minute=30, second=0, microsecond=0)
 
-            print(now_ist)
+            # print(now_ist)
 
             if not (start_time <= now_ist <= end_time):
                 print("📈 Waiting for Market Hours (9:15 AM – 3:30 PM)...")
@@ -60,7 +60,7 @@ while True:
 
             data.run_forever()
             response = data.get_data()
-            print(f"Response: {response}")
+            # print(f"Response: {response}")
 
             if 'LTP' not in response or 'LTT' not in response:
                 print(f"Missing data for token {security_id}, response: {response}")
@@ -81,9 +81,7 @@ while True:
             # Get today’s date from IST clock
             tick_date = now_ist.date()
 
-            # Handle date rollover (after midnight)
-            if tick_time > now_ist.time():  
-                tick_date = tick_date - timedelta(days=1)
+            
 
             # Combine date + tick time
             ts = datetime.combine(tick_date, tick_time).astimezone(ist)
@@ -100,7 +98,7 @@ while True:
 
             # Determine the candle interval
             interval_start = round_down_time_3min(ts)
-            print(f"Tick TS: {ts}, Interval Start: {interval_start}")
+            # print(f"Tick TS: {ts}, Interval Start: {interval_start}")
 
             # Initialize
             if security_id not in current_interval_start:
