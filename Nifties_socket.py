@@ -8,7 +8,7 @@ import pytz
 ist = pytz.timezone("Asia/Kolkata")
 
 client_id = '1100465668'
-access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY0OTkwMjY2LCJpYXQiOjE3NjQ5MDM4NjYsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.z5TcZpJLDzVWVnoVnIW0Dve-s64UqkzM1ttqZAtcwu21iEGfR5Is_nU7f8EGbhEFfXyDTD2utX7i_Qa6UOnaOA"
+access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY1MTg5Nzk3LCJpYXQiOjE3NjUxMDMzOTcsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.kdT4taL2WMSx-76DuQi5aROZN1pvPc1M43IT7yRo9Uec-HgtxXHrP1TenpGBZCR2_fs3IqRJvaJ9it60kr2aNg"
 
 dhan_context = DhanContext(client_id, access_token)
 
@@ -70,8 +70,8 @@ while True:
             ltt_time_str = response['LTT']  # "HH:MM:SS"
 
             # Log for debugging
-            with open("condition_log.txt", "a") as f:
-                f.write(f"{str(response)}\n")
+            # with open("condition_log.txt", "a") as f:
+            #     f.write(f"{str(response)}\n")
 
             # --- TICK TIMESTAMP FIX (FINAL SOLUTION) ---
 
