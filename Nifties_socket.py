@@ -8,13 +8,13 @@ import pytz
 ist = pytz.timezone("Asia/Kolkata")
 
 client_id = '1100465668'
-access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY3MzI1MjY1LCJpYXQiOjE3NjcyMzg4NjUsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.ut8FQnXZQh-tJkdBKHfx6T6yTyIwo6oAcN3AWSdgshxj0tprWS2ovzBryK9Vbv7FI4v3dPmDUciRXryy3PbAdA"
+access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY3NDA2NzI4LCJpYXQiOjE3NjczMjAzMjgsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.xWxp8Na7Sqap5qe1m8RF7wD4dwZY0uKc_7Dn8pz0DWOQXQFjCTFncx8MF-xcuJSEEETq-lIu8Vj3ABBiP3u20w"
 
 dhan_context = DhanContext(client_id, access_token)
 
 security_id = '25'  # BANKNIFTY Spot ID
 instruments = [
-    (MarketFeed.IDX, security_id, MarketFeed.Ticker),
+    (MarketFeed.FN, security_id, MarketFeed.Ticker),
 ]
 
 version = "v2"
