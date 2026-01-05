@@ -14,7 +14,7 @@ dhan_context = DhanContext(client_id, access_token)
 
 security_id = '25'  # BANKNIFTY Spot ID
 instruments = [
-    (MarketFeed.FN, security_id, MarketFeed.Ticker),
+    (MarketFeed.NSE_FNO, security_id, MarketFeed.Ticker),
 ]
 
 version = "v2"
