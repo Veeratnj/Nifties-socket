@@ -14,14 +14,7 @@ dhan_context = DhanContext(client_id,access_token)
 
 # Structure for subscribing is (exchange_segment, "security_id", subscription_type)
 
-instruments = [
-    (MarketFeed.IDX, "13", MarketFeed.Ticker),  
-    (MarketFeed.IDX, "25", MarketFeed.Ticker),  
-    (MarketFeed.IDX, "27", MarketFeed.Ticker),  
-    (MarketFeed.IDX, "51", MarketFeed.Ticker),  
-    (MarketFeed.IDX, "442", MarketFeed.Ticker),  
-   
-    ]
+
 
 
 
@@ -37,4 +30,11 @@ try:
         print(response)
 
 except Exception as e:
-    print(e)
+    print(e)instruments = [
+    (MarketFeed.IDX, "13", MarketFeed.Ticker),  
+    (MarketFeed.IDX, "25", MarketFeed.Ticker),  
+    (MarketFeed.IDX, "27", MarketFeed.Ticker),  
+    (MarketFeed.IDX, "51", MarketFeed.Ticker),  
+    (MarketFeed.IDX, "442", MarketFeed.Ticker),  
+   
+    ]

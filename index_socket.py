@@ -16,16 +16,6 @@ access_token ='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5l
 dhan_context = DhanContext(client_id, access_token)
 print(dhan_context.client_id)
 
-# Define instruments with readable names
-# instruments = [
-#     (MarketFeed.NSE, 25, MarketFeed.Ticker),   # Bank Nifty
-#     (MarketFeed.NSE, 13, MarketFeed.Ticker),   # Nifty 50
-#     (MarketFeed.NSE, 51, MarketFeed.Ticker),   # Sensex
-#     (MarketFeed.NSE, 27, MarketFeed.Ticker),   # Nifty Fin
-#     (MarketFeed.NSE, 442, MarketFeed.Ticker),  # Midcap Nifty
-# ]
-
-
 MCX_GOLD = '449534'
 MCX_SILVER = '451666'
 MCX_CRUDE = '464925'
@@ -37,12 +27,11 @@ instruments = [
     (MarketFeed.IDX, "27", MarketFeed.Ticker),  
     (MarketFeed.IDX, "51", MarketFeed.Ticker),  
     (MarketFeed.IDX, "442", MarketFeed.Ticker),  
-    # (MarketFeed.MCX, MCX_GOLD, MarketFeed.Ticker),  
-    # (MarketFeed.MCX, MCX_SILVER, MarketFeed.Ticker),  
-    # (MarketFeed.MCX, MCX_CRUDE, MarketFeed.Ticker),  
-    # (MarketFeed.MCX, MCX_NATURAL_GAS, MarketFeed.Ticker),  
-   
-    ]
+    (MarketFeed.MCX, MCX_GOLD, MarketFeed.Ticker),  
+    (MarketFeed.MCX, MCX_SILVER, MarketFeed.Ticker),  
+    (MarketFeed.MCX, MCX_CRUDE, MarketFeed.Ticker),  
+    (MarketFeed.MCX, MCX_NATURAL_GAS, MarketFeed.Ticker),  
+]
 
 # Instrument names for logging
 INSTRUMENT_NAMES = {
@@ -57,6 +46,19 @@ INSTRUMENT_NAMES = {
     MCX_NATURAL_GAS: 'NATURAL_GAS',
 }
 
+# Exchange type mapping
+EXCHANGE_TYPE = {
+    '25': 'IDX',
+    '13': 'IDX',
+    '51': 'IDX',
+    '27': 'IDX',
+    '442': 'IDX',
+    MCX_GOLD: 'MCX',
+    MCX_SILVER: 'MCX',
+    MCX_CRUDE: 'MCX',
+    MCX_NATURAL_GAS: 'MCX',
+}
+
 version = "v2"
 
 
@@ -66,12 +68,39 @@ def round_down_time_3min(dt):
     return dt.replace(minute=minute_block, second=0, microsecond=0)
 
 
+def is_market_hours(now_ist, exchange_type):
+    """Check if current time is within market hours for the given exchange"""
+    if exchange_type == 'IDX':
+        # IDX: 9:15 AM to 3:30 PM
+        start_time = now_ist.replace(hour=9, minute=15, second=0, microsecond=0)
+        end_time = now_ist.replace(hour=15, minute=30, second=0, microsecond=0)
+    elif exchange_type == 'MCX':
+        # MCX: 9:00 AM to 11:00 PM
+        start_time = now_ist.replace(hour=9, minute=0, second=0, microsecond=0)
+        end_time = now_ist.replace(hour=23, minute=0, second=0, microsecond=0)
+    else:
+        return False
+    
+    return start_time <= now_ist <= end_time
+
+
+def get_active_instruments(now_ist):
+    """Return list of security IDs that are currently in market hours"""
+    active = []
+    for security_id, exchange in EXCHANGE_TYPE.items():
+        if is_market_hours(now_ist, exchange):
+            active.append(security_id)
+    return active
+
+
 # Separate tracking for each instrument
 current_candle = {}
 current_interval_start = {}
 candles = {}
 
 print(f"📊 Monitoring {len(instruments)} instruments: {', '.join(INSTRUMENT_NAMES.values())}")
+print(f"⏰ IDX Market Hours: 9:15 AM - 3:30 PM")
+print(f"⏰ MCX Market Hours: 9:00 AM - 11:00 PM")
 
 retry_delay = 10  # Start with longer delay
 max_retry_delay = 300  # Max 5 minutes
@@ -94,11 +123,17 @@ while True:
 
         while True:
             now_ist = datetime.now(ist)
-            start_time = now_ist.replace(hour=9, minute=15, second=0, microsecond=0)
-            end_time = now_ist.replace(hour=23, minute=30, second=0, microsecond=0)
-
-            if not (start_time <= now_ist <= end_time):
-                print(f"⏰ Waiting for Market Hours (9:15 AM – 3:30 PM)... Current time: {now_ist.strftime('%H:%M:%S')}")
+            
+            # Get list of instruments currently in market hours
+            active_instruments = get_active_instruments(now_ist)
+            
+            # If no instruments are active, wait and check again
+            if not active_instruments:
+                active_idx = sum(1 for sid, ex in EXCHANGE_TYPE.items() if ex == 'IDX' and is_market_hours(now_ist, 'IDX'))
+                active_mcx = sum(1 for sid, ex in EXCHANGE_TYPE.items() if ex == 'MCX' and is_market_hours(now_ist, 'MCX'))
+                
+                print(f"⏰ Outside Market Hours - Current time: {now_ist.strftime('%H:%M:%S')}")
+                print(f"   IDX: {'Open' if active_idx > 0 else 'Closed'} | MCX: {'Open' if active_mcx > 0 else 'Closed'}")
                 time.sleep(60)
                 continue
 
@@ -121,6 +156,13 @@ while True:
                     
                     if not security_id:
                         print(f"⚠️ Missing security_id in response: {response}")
+                        continue
+                    
+                    # Check if this instrument is in market hours
+                    exchange_type = EXCHANGE_TYPE.get(security_id)
+                    if not exchange_type or security_id not in active_instruments:
+                        instrument_name = INSTRUMENT_NAMES.get(security_id, security_id)
+                        print(f"⏰ [{instrument_name}] Outside market hours, skipping tick")
                         continue
                     
                     if 'LTP' not in response or 'LTT' not in response:

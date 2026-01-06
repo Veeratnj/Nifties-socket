@@ -18,9 +18,9 @@ access_token ='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5l
 
 dhan_context = DhanContext(client_id, access_token)
 
-security_id = '25'  # BANKNIFTY Spot ID
+security_id = '464925'  # BANKNIFTY Spot ID
 instruments = [
-    (MarketFeed.NSE, security_id, MarketFeed.Ticker),
+    (MarketFeed.MCX, security_id, MarketFeed.Ticker),
 ]
 
 version = "v2"
