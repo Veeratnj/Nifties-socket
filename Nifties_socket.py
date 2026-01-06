@@ -8,7 +8,7 @@ import pytz
 ist = pytz.timezone("Asia/Kolkata")
 
 client_id = '1100465668'
-access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY3NzUxNTc1LCJpYXQiOjE3Njc2NjUxNzUsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.20XLytAhlx31fqeduuC6sT29QvWTLmB6NRJnlbBe4pmDFijhuL74ll6eeHsBeZDtV2V9A45YT6II4zE7DOkjsg"
+access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY3NzU5NjUzLCJpYXQiOjE3Njc2NzMyNTMsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.VD94mxWH_iI2A0AzfKVI-7OA9QisCEdZqkqrtC5vhe8MMnuLK4Qt5RwIO2c2-gEDMCK24bCGLSVefY2n6HUpsw"
 
 dhan_context = DhanContext(client_id, access_token)
 
@@ -60,7 +60,7 @@ while True:
 
             data.run_forever()
             response = data.get_data()
-            # print(f"Response: {response}")
+            print(f"Response: {response}")
 
             if 'LTP' not in response or 'LTT' not in response:
                 print(f"Missing data for token {security_id}, response: {response}")
@@ -70,8 +70,8 @@ while True:
             ltt_time_str = response['LTT']  # "HH:MM:SS"
 
             # Log for debugging
-            # with open("condition_log.txt", "a") as f:
-            #     f.write(f"{str(response)}\n")
+            with open("condition_log.txt", "a") as f:
+                f.write(f"{str(response)}\n")
 
             # --- TICK TIMESTAMP FIX (FINAL SOLUTION) ---
 
