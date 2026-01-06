@@ -7,14 +7,20 @@ import time
 import pytz
 ist = pytz.timezone("Asia/Kolkata")
 
-client_id = '1100465668'
-access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY3NzU5NjUzLCJpYXQiOjE3Njc2NzMyNTMsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.VD94mxWH_iI2A0AzfKVI-7OA9QisCEdZqkqrtC5vhe8MMnuLK4Qt5RwIO2c2-gEDMCK24bCGLSVefY2n6HUpsw"
+client_id = '1100465668' #raja sir id
+access_token ='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY3NzU5NjUzLCJpYXQiOjE3Njc2NzMyNTMsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.VD94mxWH_iI2A0AzfKVI-7OA9QisCEdZqkqrtC5vhe8MMnuLK4Qt5RwIO2c2-gEDMCK24bCGLSVefY2n6HUpsw'
+
+# client_id = '1100449732'   # Divya ID
+# access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY3NzYxMzk2LCJpYXQiOjE3Njc2NzQ5OTYsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDQ5NzMyIn0.xYRXr46pwv7zuGql5BNCf13gQwhpzNKJwD5VoT_XrYjY4CdAoFM5a8a-PQ2RxKwrwoUE4MwL19P6VEFVqoFFFQ"
+
+
+
 
 dhan_context = DhanContext(client_id, access_token)
 
 security_id = '25'  # BANKNIFTY Spot ID
 instruments = [
-    (MarketFeed.NSE_FNO, security_id, MarketFeed.Ticker),
+    (MarketFeed.NSE, security_id, MarketFeed.Ticker),
 ]
 
 version = "v2"

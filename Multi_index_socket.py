@@ -7,19 +7,32 @@ import time
 import pytz
 ist = pytz.timezone("Asia/Kolkata")
 
-client_id = '1100465668'
-access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY3NzU5NjUzLCJpYXQiOjE3Njc2NzMyNTMsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.VD94mxWH_iI2A0AzfKVI-7OA9QisCEdZqkqrtC5vhe8MMnuLK4Qt5RwIO2c2-gEDMCK24bCGLSVefY2n6HUpsw"
+
+client_id = '1100465668' #raja sir id
+access_token ='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY3NzU5NjUzLCJpYXQiOjE3Njc2NzMyNTMsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.VD94mxWH_iI2A0AzfKVI-7OA9QisCEdZqkqrtC5vhe8MMnuLK4Qt5RwIO2c2-gEDMCK24bCGLSVefY2n6HUpsw'
+
+
 
 dhan_context = DhanContext(client_id, access_token)
+print(dhan_context.client_id)
 
 # Define instruments with readable names
+# instruments = [
+#     (MarketFeed.NSE, 25, MarketFeed.Ticker),   # Bank Nifty
+#     (MarketFeed.NSE, 13, MarketFeed.Ticker),   # Nifty 50
+#     (MarketFeed.NSE, 51, MarketFeed.Ticker),   # Sensex
+#     (MarketFeed.NSE, 27, MarketFeed.Ticker),   # Nifty Fin
+#     (MarketFeed.NSE, 442, MarketFeed.Ticker),  # Midcap Nifty
+# ]
+
 instruments = [
-    (MarketFeed.NSE_FNO, 25, MarketFeed.Ticker),   # Bank Nifty
-    (MarketFeed.NSE_FNO, 13, MarketFeed.Ticker),   # Nifty 50
-    (MarketFeed.NSE_FNO, 51, MarketFeed.Ticker),   # Sensex
-    (MarketFeed.NSE_FNO, 27, MarketFeed.Ticker),   # Nifty Fin
-    (MarketFeed.NSE_FNO, 442, MarketFeed.Ticker),  # Midcap Nifty
-]
+    (MarketFeed.IDX, "13", MarketFeed.Ticker),  
+    (MarketFeed.IDX, "25", MarketFeed.Ticker),  
+    (MarketFeed.IDX, "27", MarketFeed.Ticker),  
+    (MarketFeed.IDX, "51", MarketFeed.Ticker),  
+    (MarketFeed.IDX, "442", MarketFeed.Ticker),  
+   
+    ]
 
 # Instrument names for logging
 INSTRUMENT_NAMES = {
@@ -46,17 +59,23 @@ candles = {}
 
 print(f"📊 Monitoring {len(instruments)} instruments: {', '.join(INSTRUMENT_NAMES.values())}")
 
-retry_delay = 5
-max_retry_delay = 60
+retry_delay = 10  # Start with longer delay
+max_retry_delay = 300  # Max 5 minutes
 retry_count = 0
+connection_cooldown = 30  # Wait before first connection
 
+
+# Initial cooldown to avoid rate limit
+print(f"⏳ Waiting {connection_cooldown}s before connecting (rate limit protection)...")
+time.sleep(connection_cooldown)
 
 while True:
     try:
+        print(f"🔌 Attempting to connect to Market Feed...")
         data = MarketFeed(dhan_context, instruments, version)
-        print("🚀 Starting Market Feed...")
+        print("✅ Market Feed Connected Successfully!")
 
-        retry_delay = 5
+        retry_delay = 10  # Reset on successful connection
         retry_count = 0
 
         while True:
@@ -73,10 +92,12 @@ while True:
             
             # Process all available ticks in buffer
             ticks_processed = 0
-            while True:
+            max_ticks_per_batch = 100  # Prevent infinite loops
+            
+            for _ in range(max_ticks_per_batch):
                 try:
                     response = data.get_data()
-                    
+                    print(response)
                     # No more data in buffer
                     if response is None:
                         break
@@ -170,7 +191,21 @@ while True:
                         candle['low'] = min(candle['low'], ltp)
                         candle['close'] = ltp
 
+                except KeyError as e:
+                    print(f"⚠️ Missing key in response: {e}")
+                    continue
+                except ValueError as e:
+                    print(f"⚠️ Value error in tick data: {e}")
+                    continue
                 except Exception as e:
+                    error_msg = str(e)
+                    
+                    # WebSocket connection errors - break inner loop to reconnect
+                    if any(x in error_msg.lower() for x in ['close frame', 'websocket', 'connection', 'closed']):
+                        print(f"🔌 WebSocket disconnected: {error_msg}")
+                        print(f"🔄 Reconnecting...")
+                        break  # Exit tick processing loop to reconnect
+                    
                     print(f"⚠️ Error processing tick: {e}")
                     continue
             
@@ -180,9 +215,16 @@ while True:
             
             # Small delay before next batch
             time.sleep(0.1)
-
+            
     except KeyboardInterrupt:
         print("\n🛑 Shutting down gracefully...")
+        
+        # Close WebSocket connection properly
+        try:
+            data.close_connection()
+            print("✅ WebSocket closed properly")
+        except:
+            pass
         
         # Save any remaining candles
         for security_id, candle in current_candle.items():
@@ -207,9 +249,35 @@ while True:
 
     except Exception as e:
         retry_count += 1
-        print(f"❌ Main Loop Error: {e}")
-        print(f"⏳ Retry {retry_count}: Waiting {retry_delay} seconds...")
-
-        time.sleep(retry_delay)
-        retry_delay = min(retry_delay * 2, max_retry_delay)
+        error_msg = str(e)
+        
+        # Close any open connections
+        try:
+            data.close_connection()
+        except:
+            pass
+        
+        # Special handling for rate limit errors
+        if "429" in error_msg or "rate limit" in error_msg.lower():
+            print(f"🚫 Rate Limit Hit! (Attempt {retry_count})")
+            print(f"💡 Tip: Check if other scripts are running with same credentials")
+            
+            # Longer wait for rate limits
+            rate_limit_wait = min(60 * retry_count, 300)  # 1 min, 2 min, 3 min... max 5 min
+            print(f"⏳ Waiting {rate_limit_wait} seconds before retry...")
+            time.sleep(rate_limit_wait)
+        
+        # WebSocket disconnection errors
+        elif any(x in error_msg.lower() for x in ['close frame', 'websocket', 'connection']):
+            print(f"🔌 Connection Lost: {error_msg}")
+            wait_time = min(10 * retry_count, 60)  # 10s, 20s, 30s... max 60s
+            print(f"⏳ Reconnecting in {wait_time} seconds...")
+            time.sleep(wait_time)
+        
+        else:
+            print(f"❌ Main Loop Error: {e}")
+            print(f"⏳ Retry {retry_count}: Waiting {retry_delay} seconds...")
+            time.sleep(retry_delay)
+            retry_delay = min(retry_delay * 2, max_retry_delay)
+        
         continue

@@ -1,4 +1,4 @@
-dhanhq==2.1
+dhanhq==2.2.0
 pandas
 psycopg2-binary
 python-dotenv
