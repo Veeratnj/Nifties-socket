@@ -18,9 +18,10 @@ access_token ='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5l
 
 dhan_context = DhanContext(client_id, access_token)
 
-security_id = '464925'  # BANKNIFTY Spot ID
+security_id = '25'  # BANKNIFTY Spot ID
 instruments = [
-    (MarketFeed.MCX, security_id, MarketFeed.Ticker),
+    # (MarketFeed.MCX, security_id, MarketFeed.Ticker),
+    (MarketFeed.MCX, "486533", MarketFeed.Ticker)
 ]
 
 version = "v2"
@@ -55,7 +56,7 @@ while True:
 
             now_ist = datetime.now(ist)
             start_time = now_ist.replace(hour=9, minute=15, second=0, microsecond=0)
-            end_time = now_ist.replace(hour=15, minute=30, second=0, microsecond=0)
+            end_time = now_ist.replace(hour=23, minute=30, second=0, microsecond=0)
 
             # print(now_ist)
 

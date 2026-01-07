@@ -1,7 +1,7 @@
 import websocket
 import json
 from datetime import datetime, timedelta
-from services import insert_ohlc_data_api, insert_spot_ltp_api
+# from services import insert_ohlc_data_api, insert_spot_ltp_api
 import time
 import threading
 
@@ -30,7 +30,7 @@ INSTRUMENTS = {
 
 # Subscription request format (based on Dhan docs)
 SUBSCRIPTION_CODE = 15  # Ticker data
-EXCHANGE_SEGMENT = 0    # NSE F&O
+EXCHANGE_SEGMENT = 1    # NSE F&O
 
 # Tracking data
 current_candle = {}
@@ -116,11 +116,12 @@ def on_message(ws, message):
         
         # Insert spot LTP
         try:
-            insert_spot_ltp_api(
-                token=security_id,
-                timestamp=ts.isoformat(),
-                ltp=ltp
-            )
+            # insert_spot_ltp_api(
+            #     token=security_id,
+            #     timestamp=ts.isoformat(),
+            #     ltp=ltp
+            # )
+            ''
             print(f"✅ [{instrument_name}] LTP: {ltp:.2f} @ {ltt_time_str}")
         except Exception as e:
             print(f"❌ [{instrument_name}] LTP insert error: {e}")
@@ -144,16 +145,17 @@ def on_message(ws, message):
             if current_candle[security_id] is not None:
                 completed = current_candle[security_id]
                 try:
-                    insert_ohlc_data_api(
-                        symbol=security_id,
-                        timeframe='3_MIN',
-                        timestamp=completed['start_time'],
-                        open=completed['open'],
-                        high=completed['high'],
-                        low=completed['low'],
-                        close=completed['close'],
-                        volume=0
-                    )
+                    # insert_ohlc_data_api(
+                    #     symbol=security_id,
+                    #     timeframe='3_MIN',
+                    #     timestamp=completed['start_time'],
+                    #     open=completed['open'],
+                    #     high=completed['high'],
+                    #     low=completed['low'],
+                    #     close=completed['close'],
+                    #     volume=0
+                    # )
+                    ''
                     print(f"🕯️ [{instrument_name}] Candle: O:{completed['open']:.2f} H:{completed['high']:.2f} L:{completed['low']:.2f} C:{completed['close']:.2f} @ {completed['start_time']}")
                     candles[security_id].append(completed)
                 except Exception as e:
@@ -261,16 +263,17 @@ def main():
                 if candle is not None:
                     instrument_name = INSTRUMENTS.get(security_id, security_id)
                     try:
-                        insert_ohlc_data_api(
-                            symbol=security_id,
-                            timeframe='3_MIN',
-                            timestamp=candle['start_time'],
-                            open=candle['open'],
-                            high=candle['high'],
-                            low=candle['low'],
-                            close=candle['close'],
-                            volume=0
-                        )
+                        # insert_ohlc_data_api(
+                        #     symbol=security_id,
+                        #     timeframe='3_MIN',
+                        #     timestamp=candle['start_time'],
+                        #     open=candle['open'],
+                        #     high=candle['high'],
+                        #     low=candle['low'],
+                        #     close=candle['close'],
+                        #     volume=0
+                        # )
+                        ''
                         print(f"💾 [{instrument_name}] Final candle saved")
                     except Exception as e:
                         print(f"❌ [{instrument_name}] Final save error: {e}")
