@@ -28,10 +28,10 @@ instruments = [
     (MarketFeed.IDX, "27", MarketFeed.Ticker),  
     (MarketFeed.IDX, "51", MarketFeed.Ticker),  
     (MarketFeed.IDX, "442", MarketFeed.Ticker),  
-    (MarketFeed.MCX, MCX_GOLD, MarketFeed.Ticker),  
-    (MarketFeed.MCX, MCX_SILVER, MarketFeed.Ticker),  
-    (MarketFeed.MCX, MCX_CRUDE, MarketFeed.Ticker),  
-    (MarketFeed.MCX, MCX_NATURAL_GAS, MarketFeed.Ticker),  
+    # (MarketFeed.MCX, MCX_GOLD, MarketFeed.Ticker),  
+    # (MarketFeed.MCX, MCX_SILVER, MarketFeed.Ticker),  
+    # (MarketFeed.MCX, MCX_CRUDE, MarketFeed.Ticker),  
+    # (MarketFeed.MCX, MCX_NATURAL_GAS, MarketFeed.Ticker),  
 ]
 
 # Instrument names for logging
