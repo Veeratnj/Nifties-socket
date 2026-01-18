@@ -8,19 +8,19 @@ import pytz
 ist = pytz.timezone("Asia/Kolkata")
 
 
-client_id = '1100465668' #raja sir id
-access_token ='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY4NTg1NjUyLCJpYXQiOjE3Njg0OTkyNTIsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.WUoTLheZ1TVqImLhPFczTruwyRwPSJ7WRckbzZFoL1qOTMdrLks9bmO9kjCMEyiiFSSp9jFs_kh03d2H4FPEDQ'
-# client_id = '1100449732' #divya sir id
-# access_token ='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY4NDEwNzU0LCJpYXQiOjE3NjgzMjQzNTQsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDQ5NzMyIn0.95oswZQd6olqdEP1rUnAU6cnMXwF-qrmgAn9uLhacs-uyP9EVCDPS3Ah1E_DxyerAHC-zqO4Nl0bGkjjP6gQzQ'
+# client_id = '1100465668' #raja sir id
+# access_token ='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY4ODI2NDQzLCJpYXQiOjE3Njg3NDAwNDMsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDQ5NzMyIn0.glvOboHa1JmEX4yuZm_1CYcVobMz2JohNJ0WnQ7EtNgaPM50tToHDlXYLAAFTOj3eCHPQDdPxrabDd-qgbNFNQ'
+client_id = '1100449732' #divya sir id
+access_token ='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY4ODI2NDQzLCJpYXQiOjE3Njg3NDAwNDMsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDQ5NzMyIn0.glvOboHa1JmEX4yuZm_1CYcVobMz2JohNJ0WnQ7EtNgaPM50tToHDlXYLAAFTOj3eCHPQDdPxrabDd-qgbNFNQ'
 
 
 dhan_context = DhanContext(client_id, access_token)
 print(dhan_context.client_id)
 
-MCX_GOLD = '449534'
-MCX_SILVER = '451666'
-MCX_CRUDE = '464925'
-MCX_NATURAL_GAS = '465849'
+# MCX_GOLD = '449534'
+# MCX_SILVER = '451666'
+# MCX_CRUDE = '464925'
+# MCX_NATURAL_GAS = '465849'
 
 instruments = [
     (MarketFeed.IDX, "13", MarketFeed.Ticker),  
@@ -28,7 +28,7 @@ instruments = [
     (MarketFeed.IDX, "27", MarketFeed.Ticker),  
     (MarketFeed.IDX, "51", MarketFeed.Ticker),  
     (MarketFeed.IDX, "442", MarketFeed.Ticker),  
-    # (MarketFeed.MCX, MCX_GOLD, MarketFeed.Ticker),  
+    (MarketFeed.MCX, MCX_GOLD, MarketFeed.Ticker),  
     # (MarketFeed.MCX, MCX_SILVER, MarketFeed.Ticker),  
     # (MarketFeed.MCX, MCX_CRUDE, MarketFeed.Ticker),  
     # (MarketFeed.MCX, MCX_NATURAL_GAS, MarketFeed.Ticker),  
@@ -42,9 +42,9 @@ INSTRUMENT_NAMES = {
     '27': 'NIFTYFIN',
     '442': 'MIDCAP',
     MCX_GOLD: 'GOLD',
-    MCX_SILVER: 'SILVER',
-    MCX_CRUDE: 'CRUDE',
-    MCX_NATURAL_GAS: 'NATURAL_GAS',
+    # MCX_SILVER: 'SILVER',
+    # MCX_CRUDE: 'CRUDE',
+    # MCX_NATURAL_GAS: 'NATURAL_GAS',
 }
 
 # Exchange type mapping
@@ -55,9 +55,9 @@ EXCHANGE_TYPE = {
     '27': 'IDX',
     '442': 'IDX',
     MCX_GOLD: 'MCX',
-    MCX_SILVER: 'MCX',
-    MCX_CRUDE: 'MCX',
-    MCX_NATURAL_GAS: 'MCX',
+    # MCX_SILVER: 'MCX',
+    # MCX_CRUDE: 'MCX',
+    # MCX_NATURAL_GAS: 'MCX',
 }
 
 version = "v2"
@@ -106,7 +106,7 @@ print(f"⏰ MCX Market Hours: 9:00 AM - 11:00 PM")
 retry_delay = 10  # Start with longer delay
 max_retry_delay = 300  # Max 5 minutes
 retry_count = 0
-connection_cooldown = 30  # Wait before first connection
+connection_cooldown = 2  # Wait before first connection
 
 
 # Initial cooldown to avoid rate limit
@@ -261,6 +261,7 @@ while True:
                     if any(x in error_msg.lower() for x in ['close frame', 'websocket', 'connection', 'closed']):
                         print(f"🔌 WebSocket disconnected: {error_msg}")
                         print(f"🔄 Reconnecting...")
+                        time.sleep(60)
                         break  # Exit tick processing loop to reconnect
                     
                     print(f"⚠️ Error processing tick: {e}")
