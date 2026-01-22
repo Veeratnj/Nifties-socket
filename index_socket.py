@@ -8,14 +8,34 @@ import pytz
 ist = pytz.timezone("Asia/Kolkata")
 
 
-# client_id = '1100465668' #raja sir id
-# access_token ='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY5MDk0MDE5LCJpYXQiOjE3NjkwMDc2MTksInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.LEU9prj65uSzgGdchNkvI5lNRvmrdh8Q1JjCNnvN8dMNhDGfwL9mKSfXfonpTxnqlsL37jZPdqLX5513jE9U6A'
-client_id = '1100449732' #divya sir id
-access_token ='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY5MDkzODk5LCJpYXQiOjE3NjkwMDc0OTksInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDQ5NzMyIn0.AgTQHkEs4KoY8kCsNjgMUgHhloDgxTnt6usXdwnYHtnlR_evwngRrxZeehnIyS4vMUol-hLJRPz7XfL9ztjeXw'
+# Credentials list
+CREDENTIALS = [
+    {
+        'client_id': '1100449732', # divya sir id
+        'access_token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY5MDkzODk5LCJpYXQiOjE3NjkwMDc0OTksInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDQ5NzMyIn0.AgTQHkEs4KoY8kCsNjgMUgHhloDgxTnt6usXdwnYHtnlR_evwngRrxZeehnIyS4vMUol-hLJRPz7XfL9ztjeXw'
+    },
+    {
+        'client_id': '1100465668', # raja sir id
+        'access_token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY5MDk0MDE5LCJpYXQiOjE3NjkwMDc2MTksInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.LEU9prj65uSzgGdchNkvI5lNRvmrdh8Q1JjCNnvN8dMNhDGfwL9mKSfXfonpTxnqlsL37jZPdqLX5513jE9U6A'
+    }
+]
 
+current_cred_index = 0
 
-dhan_context = DhanContext(client_id, access_token)
-print(dhan_context.client_id)
+def get_current_creds():
+    return CREDENTIALS[current_cred_index]
+
+def switch_to_next_creds():
+    global current_cred_index
+    current_cred_index = (current_cred_index + 1) % len(CREDENTIALS)
+    creds = get_current_creds()
+    print(f"🔄 Switched to credentials for Client ID: {creds['client_id']}")
+    return creds
+
+# Initial setup
+creds = get_current_creds()
+dhan_context = DhanContext(creds['client_id'], creds['access_token'])
+print(f"🚀 Initialized with Client ID: {dhan_context.client_id}")
 
 # MCX_GOLD = '449534'
 # MCX_SILVER = '451666'
@@ -318,11 +338,14 @@ while True:
         # Special handling for rate limit errors
         if "429" in error_msg or "rate limit" in error_msg.lower():
             print(f"🚫 Rate Limit Hit! (Attempt {retry_count})")
-            print(f"💡 Tip: Check if other scripts are running with same credentials")
             
-            # Longer wait for rate limits
-            rate_limit_wait = min(60 * retry_count, 300)  # 1 min, 2 min, 3 min... max 5 min
-            print(f"⏳ Waiting {rate_limit_wait} seconds before retry...")
+            # Switch to next credentials
+            new_creds = switch_to_next_creds()
+            dhan_context = DhanContext(new_creds['client_id'], new_creds['access_token'])
+            
+            # Wait a bit before retrying with new credentials
+            rate_limit_wait = 10  # Reduced wait since we are switching creds
+            print(f"⏳ Waiting {rate_limit_wait} seconds before retry with new credentials...")
             time.sleep(rate_limit_wait)
         
         # WebSocket disconnection errors
