@@ -12,11 +12,11 @@ ist = pytz.timezone("Asia/Kolkata")
 CREDENTIALS = [
     {
         'client_id': '1100449732', # divya sir id
-        'access_token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY5MDkzODk5LCJpYXQiOjE3NjkwMDc0OTksInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDQ5NzMyIn0.AgTQHkEs4KoY8kCsNjgMUgHhloDgxTnt6usXdwnYHtnlR_evwngRrxZeehnIyS4vMUol-hLJRPz7XfL9ztjeXw'
+        'access_token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY5MTg2MTI0LCJpYXQiOjE3NjkwOTk3MjQsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDQ5NzMyIn0.2gYOTuzVe7U_51odvSAHQtyuyNVYFAxiyBIZRa4u4h3A8GD6USzXbCzdRntJaWPYtZHmrCwOfKdOFm9bn9wTPg'
     },
     {
         'client_id': '1100465668', # raja sir id
-        'access_token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY5MDk0MDE5LCJpYXQiOjE3NjkwMDc2MTksInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.LEU9prj65uSzgGdchNkvI5lNRvmrdh8Q1JjCNnvN8dMNhDGfwL9mKSfXfonpTxnqlsL37jZPdqLX5513jE9U6A'
+        'access_token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY5MTg2MjAyLCJpYXQiOjE3NjkwOTk4MDIsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.vVk_6Rt6MX4W4XYN7Ivuvcx1y0-jpWNPpO4P1dv5jIKKdQat2eU1rG74YjqAeFu5Pk1Y-C6vs_2eQ8cOj9z50Q'
     }
 ]
 
