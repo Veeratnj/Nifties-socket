@@ -8,16 +8,42 @@ import pytz
 ist = pytz.timezone("Asia/Kolkata")
 
 
+
+def get_dhan_creds():
+    """Fetch admin dhan credentials"""
+    try:
+        url = "http://localhost:8000/db/signals/get-admin-dhan-creds/2"
+        resp = requests.get(url, timeout=5)
+        resp.raise_for_status()
+
+        records = resp.json()   
+        return records
+
+    except requests.exceptions.ConnectionError:
+        print("⚠️ API not reachable")
+        return []
+    except requests.exceptions.Timeout:
+        print("⚠️ API request timeout")
+        return []
+    except Exception as e:
+        print(f"❌ Error fetching credentials: {e}")
+        return []
+
+
+
+
 # Credentials list
 CREDENTIALS = [
-    {
-        'client_id': '1100449732', # divya sir id
-        'access_token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY5MTg2MTI0LCJpYXQiOjE3NjkwOTk3MjQsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDQ5NzMyIn0.2gYOTuzVe7U_51odvSAHQtyuyNVYFAxiyBIZRa4u4h3A8GD6USzXbCzdRntJaWPYtZHmrCwOfKdOFm9bn9wTPg'
-    },
-    {
-        'client_id': '1100465668', # raja sir id
-        'access_token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY5MTg2MjAyLCJpYXQiOjE3NjkwOTk4MDIsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.vVk_6Rt6MX4W4XYN7Ivuvcx1y0-jpWNPpO4P1dv5jIKKdQat2eU1rG74YjqAeFu5Pk1Y-C6vs_2eQ8cOj9z50Q'
-    }
+    # {
+    #     'client_id': '1100449732', # divya sir id
+    #     'access_token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY5MTg2MTI0LCJpYXQiOjE3NjkwOTk3MjQsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDQ5NzMyIn0.2gYOTuzVe7U_51odvSAHQtyuyNVYFAxiyBIZRa4u4h3A8GD6USzXbCzdRntJaWPYtZHmrCwOfKdOFm9bn9wTPg'
+    # },
+    # {
+    #     'client_id': '1100465668', # raja sir id
+    #     'access_token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY5MTg2MjAyLCJpYXQiOjE3NjkwOTk4MDIsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.vVk_6Rt6MX4W4XYN7Ivuvcx1y0-jpWNPpO4P1dv5jIKKdQat2eU1rG74YjqAeFu5Pk1Y-C6vs_2eQ8cOj9z50Q'
+    # }
+    get_dhan_creds(),
+    get_dhan_creds()
 ]
 
 current_cred_index = 0
