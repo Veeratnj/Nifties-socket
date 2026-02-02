@@ -6,13 +6,14 @@ import time
 
 import pytz
 ist = pytz.timezone("Asia/Kolkata")
+import requests
 
 
 
-def get_dhan_creds():
+def get_dhan_creds(id=2):
     """Fetch admin dhan credentials"""
     try:
-        url = "http://localhost:8000/db/signals/get-admin-dhan-creds/2"
+        url = f"http://localhost:8000/db/signals/get-admin-dhan-creds/{str(id)}"
         resp = requests.get(url, timeout=5)
         resp.raise_for_status()
 
@@ -42,8 +43,8 @@ CREDENTIALS = [
     #     'client_id': '1100465668', # raja sir id
     #     'access_token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY5MTg2MjAyLCJpYXQiOjE3NjkwOTk4MDIsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.vVk_6Rt6MX4W4XYN7Ivuvcx1y0-jpWNPpO4P1dv5jIKKdQat2eU1rG74YjqAeFu5Pk1Y-C6vs_2eQ8cOj9z50Q'
     # }
-    get_dhan_creds(),
-    get_dhan_creds()
+    get_dhan_creds(1),
+    get_dhan_creds(2)
 ]
 
 current_cred_index = 0
