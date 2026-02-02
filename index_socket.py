@@ -3,10 +3,9 @@ import json
 from datetime import date, datetime, timedelta
 from services import insert_ohlc_data_csv, insert_ohlc_data_api, insert_spot_ltp_api
 import time
-
+import requests
 import pytz
 ist = pytz.timezone("Asia/Kolkata")
-import requests
 
 
 
