@@ -6,45 +6,28 @@ import time
 import requests
 import pytz
 ist = pytz.timezone("Asia/Kolkata")
-import dotenv
-import os
-
-dotenv.load_dotenv()
-
-BASE_URL = os.getenv("BASE_URL")
-
 
 
 
 def get_dhan_creds(id=2):
     """Fetch admin dhan credentials"""
     try:
-        # BASE_URL = "http://13.204.188.14:8000"
-        url = f"{BASE_URL}/db/signals/get-admin-dhan-creds/{str(id)}"
+        url = f"http://localhost:8000/db/signals/get-admin-dhan-creds/{str(id)}"
         resp = requests.get(url, timeout=5)
         resp.raise_for_status()
 
-        records = resp.json()
-        
-        # Strip whitespace from credentials to prevent authentication errors
-        if isinstance(records, dict):
-            if 'client_id' in records:
-                records['client_id'] = str(records['client_id']).strip()
-            if 'access_token' in records:
-                records['access_token'] = records['access_token'].strip()
-        
-        print(f"✅ Fetched credentials for Client ID: {records.get('client_id', 'Unknown')}")
+        records = resp.json()   
         return records
 
     except requests.exceptions.ConnectionError:
         print("⚠️ API not reachable")
-        return {'client_id': '', 'access_token': ''}
+        return []
     except requests.exceptions.Timeout:
         print("⚠️ API request timeout")
-        return {'client_id': '', 'access_token': ''}
+        return []
     except Exception as e:
         print(f"❌ Error fetching credentials: {e}")
-        return {'client_id': '', 'access_token': ''}
+        return []
 
 
 
@@ -62,7 +45,7 @@ CREDENTIALS = [
     get_dhan_creds(1),
     get_dhan_creds(2)
 ]
-
+print(CREDENTIALS)
 current_cred_index = 0
 
 def get_current_creds():
@@ -77,6 +60,7 @@ def switch_to_next_creds():
 
 # Initial setup
 creds = get_current_creds()
+print(creds)
 dhan_context = DhanContext(creds['client_id'], creds['access_token'])
 print(f"🚀 Initialized with Client ID: {dhan_context.client_id}")
 
