@@ -3,33 +3,87 @@ import json
 from datetime import date, datetime, timedelta
 from services import insert_ohlc_data_csv, insert_ohlc_data_api, insert_spot_ltp_api
 import time
-
+import requests
 import pytz
 ist = pytz.timezone("Asia/Kolkata")
+import dotenv
+import os
+
+dotenv.load_dotenv()
+
+BASE_URL = os.getenv("BASE_URL")
 
 
-client_id = '1100465668' #raja sir id
-access_token ='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY3NzU5NjUzLCJpYXQiOjE3Njc2NzMyNTMsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.VD94mxWH_iI2A0AzfKVI-7OA9QisCEdZqkqrtC5vhe8MMnuLK4Qt5RwIO2c2-gEDMCK24bCGLSVefY2n6HUpsw'
+
+
+def get_dhan_creds(id=2):
+    """Fetch admin dhan credentials"""
+    try:
+        # BASE_URL = "http://13.204.188.14:8000"
+        url = f"{BASE_URL}/db/signals/get-admin-dhan-creds/{str(id)}"
+        resp = requests.get(url, timeout=5)
+        resp.raise_for_status()
+
+        records = resp.json()
+        
+        # Strip whitespace from credentials to prevent authentication errors
+        if isinstance(records, dict):
+            if 'client_id' in records:
+                records['client_id'] = str(records['client_id']).strip()
+            if 'access_token' in records:
+                records['access_token'] = records['access_token'].strip()
+        
+        print(f"✅ Fetched credentials for Client ID: {records.get('client_id', 'Unknown')}")
+        return records
+
+    except requests.exceptions.ConnectionError:
+        print("⚠️ API not reachable")
+        return {'client_id': '', 'access_token': ''}
+    except requests.exceptions.Timeout:
+        print("⚠️ API request timeout")
+        return {'client_id': '', 'access_token': ''}
+    except Exception as e:
+        print(f"❌ Error fetching credentials: {e}")
+        return {'client_id': '', 'access_token': ''}
 
 
 
-dhan_context = DhanContext(client_id, access_token)
-print(dhan_context.client_id)
 
-# Define instruments with readable names
-# instruments = [
-#     (MarketFeed.NSE, 25, MarketFeed.Ticker),   # Bank Nifty
-#     (MarketFeed.NSE, 13, MarketFeed.Ticker),   # Nifty 50
-#     (MarketFeed.NSE, 51, MarketFeed.Ticker),   # Sensex
-#     (MarketFeed.NSE, 27, MarketFeed.Ticker),   # Nifty Fin
-#     (MarketFeed.NSE, 442, MarketFeed.Ticker),  # Midcap Nifty
-# ]
+# Credentials list
+CREDENTIALS = [
+    # {
+    #     'client_id': '1100449732', # divya sir id
+    #     'access_token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY5MTg2MTI0LCJpYXQiOjE3NjkwOTk3MjQsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDQ5NzMyIn0.2gYOTuzVe7U_51odvSAHQtyuyNVYFAxiyBIZRa4u4h3A8GD6USzXbCzdRntJaWPYtZHmrCwOfKdOFm9bn9wTPg'
+    # },
+    # {
+    #     'client_id': '1100465668', # raja sir id
+    #     'access_token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzY5MTg2MjAyLCJpYXQiOjE3NjkwOTk4MDIsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTAwNDY1NjY4In0.vVk_6Rt6MX4W4XYN7Ivuvcx1y0-jpWNPpO4P1dv5jIKKdQat2eU1rG74YjqAeFu5Pk1Y-C6vs_2eQ8cOj9z50Q'
+    # }
+    get_dhan_creds(1),
+    get_dhan_creds(2)
+]
 
+current_cred_index = 0
 
-MCX_GOLD = '449534'
-MCX_SILVER = '451666'
-MCX_CRUDE = '464925'
-MCX_NATURAL_GAS = '465849'
+def get_current_creds():
+    return CREDENTIALS[current_cred_index]
+
+def switch_to_next_creds():
+    global current_cred_index
+    current_cred_index = (current_cred_index + 1) % len(CREDENTIALS)
+    creds = get_current_creds()
+    print(f"🔄 Switched to credentials for Client ID: {creds['client_id']}")
+    return creds
+
+# Initial setup
+creds = get_current_creds()
+dhan_context = DhanContext(creds['client_id'], creds['access_token'])
+print(f"🚀 Initialized with Client ID: {dhan_context.client_id}")
+
+# MCX_GOLD = '449534'
+# MCX_SILVER = '451666'
+# MCX_CRUDE = '464925'
+# MCX_NATURAL_GAS = '465849'
 
 instruments = [
     (MarketFeed.IDX, "13", MarketFeed.Ticker),  
@@ -41,8 +95,7 @@ instruments = [
     # (MarketFeed.MCX, MCX_SILVER, MarketFeed.Ticker),  
     # (MarketFeed.MCX, MCX_CRUDE, MarketFeed.Ticker),  
     # (MarketFeed.MCX, MCX_NATURAL_GAS, MarketFeed.Ticker),  
-   
-    ]
+]
 
 # Instrument names for logging
 INSTRUMENT_NAMES = {
@@ -51,10 +104,23 @@ INSTRUMENT_NAMES = {
     '51': 'SENSEX',
     '27': 'NIFTYFIN',
     '442': 'MIDCAP',
-    MCX_GOLD: 'GOLD',
-    MCX_SILVER: 'SILVER',
-    MCX_CRUDE: 'CRUDE',
-    MCX_NATURAL_GAS: 'NATURAL_GAS',
+    # MCX_GOLD: 'GOLD',
+    # MCX_SILVER: 'SILVER',
+    # MCX_CRUDE: 'CRUDE',
+    # MCX_NATURAL_GAS: 'NATURAL_GAS',
+}
+
+# Exchange type mapping
+EXCHANGE_TYPE = {
+    '25': 'IDX',
+    '13': 'IDX',
+    '51': 'IDX',
+    '27': 'IDX',
+    '442': 'IDX',
+    # MCX_GOLD: 'MCX',
+    # MCX_SILVER: 'MCX',
+    # MCX_CRUDE: 'MCX',
+    # MCX_NATURAL_GAS: 'MCX',
 }
 
 version = "v2"
@@ -66,17 +132,44 @@ def round_down_time_3min(dt):
     return dt.replace(minute=minute_block, second=0, microsecond=0)
 
 
+def is_market_hours(now_ist, exchange_type):
+    """Check if current time is within market hours for the given exchange"""
+    if exchange_type == 'IDX':
+        # IDX: 9:15 AM to 3:30 PM
+        start_time = now_ist.replace(hour=9, minute=15, second=0, microsecond=0)
+        end_time = now_ist.replace(hour=15, minute=30, second=0, microsecond=0)
+    elif exchange_type == 'MCX':
+        # MCX: 9:00 AM to 11:00 PM
+        start_time = now_ist.replace(hour=9, minute=0, second=0, microsecond=0)
+        end_time = now_ist.replace(hour=23, minute=0, second=0, microsecond=0)
+    else:
+        return False
+    
+    return start_time <= now_ist <= end_time
+
+
+def get_active_instruments(now_ist):
+    """Return list of security IDs that are currently in market hours"""
+    active = []
+    for security_id, exchange in EXCHANGE_TYPE.items():
+        if is_market_hours(now_ist, exchange):
+            active.append(security_id)
+    return active
+
+
 # Separate tracking for each instrument
 current_candle = {}
 current_interval_start = {}
 candles = {}
 
 print(f"📊 Monitoring {len(instruments)} instruments: {', '.join(INSTRUMENT_NAMES.values())}")
+print(f"⏰ IDX Market Hours: 9:15 AM - 3:30 PM")
+print(f"⏰ MCX Market Hours: 9:00 AM - 11:00 PM")
 
 retry_delay = 10  # Start with longer delay
 max_retry_delay = 300  # Max 5 minutes
 retry_count = 0
-connection_cooldown = 30  # Wait before first connection
+connection_cooldown = 2  # Wait before first connection
 
 
 # Initial cooldown to avoid rate limit
@@ -94,11 +187,17 @@ while True:
 
         while True:
             now_ist = datetime.now(ist)
-            start_time = now_ist.replace(hour=9, minute=15, second=0, microsecond=0)
-            end_time = now_ist.replace(hour=23, minute=30, second=0, microsecond=0)
-
-            if not (start_time <= now_ist <= end_time):
-                print(f"⏰ Waiting for Market Hours (9:15 AM – 3:30 PM)... Current time: {now_ist.strftime('%H:%M:%S')}")
+            
+            # Get list of instruments currently in market hours
+            active_instruments = get_active_instruments(now_ist)
+            
+            # If no instruments are active, wait and check again
+            if not active_instruments:
+                active_idx = sum(1 for sid, ex in EXCHANGE_TYPE.items() if ex == 'IDX' and is_market_hours(now_ist, 'IDX'))
+                active_mcx = sum(1 for sid, ex in EXCHANGE_TYPE.items() if ex == 'MCX' and is_market_hours(now_ist, 'MCX'))
+                
+                print(f"⏰ Outside Market Hours - Current time: {now_ist.strftime('%H:%M:%S')}")
+                print(f"   IDX: {'Open' if active_idx > 0 else 'Closed'} | MCX: {'Open' if active_mcx > 0 else 'Closed'}")
                 time.sleep(60)
                 continue
 
@@ -121,6 +220,13 @@ while True:
                     
                     if not security_id:
                         print(f"⚠️ Missing security_id in response: {response}")
+                        continue
+                    
+                    # Check if this instrument is in market hours
+                    exchange_type = EXCHANGE_TYPE.get(security_id)
+                    if not exchange_type or security_id not in active_instruments:
+                        instrument_name = INSTRUMENT_NAMES.get(security_id, security_id)
+                        print(f"⏰ [{instrument_name}] Outside market hours, skipping tick")
                         continue
                     
                     if 'LTP' not in response or 'LTT' not in response:
@@ -218,6 +324,7 @@ while True:
                     if any(x in error_msg.lower() for x in ['close frame', 'websocket', 'connection', 'closed']):
                         print(f"🔌 WebSocket disconnected: {error_msg}")
                         print(f"🔄 Reconnecting...")
+                        time.sleep(60)
                         break  # Exit tick processing loop to reconnect
                     
                     print(f"⚠️ Error processing tick: {e}")
@@ -274,11 +381,14 @@ while True:
         # Special handling for rate limit errors
         if "429" in error_msg or "rate limit" in error_msg.lower():
             print(f"🚫 Rate Limit Hit! (Attempt {retry_count})")
-            print(f"💡 Tip: Check if other scripts are running with same credentials")
             
-            # Longer wait for rate limits
-            rate_limit_wait = min(60 * retry_count, 300)  # 1 min, 2 min, 3 min... max 5 min
-            print(f"⏳ Waiting {rate_limit_wait} seconds before retry...")
+            # Switch to next credentials
+            new_creds = switch_to_next_creds()
+            dhan_context = DhanContext(new_creds['client_id'], new_creds['access_token'])
+            
+            # Wait a bit before retrying with new credentials
+            rate_limit_wait = 10  # Reduced wait since we are switching creds
+            print(f"⏳ Waiting {rate_limit_wait} seconds before retry with new credentials...")
             time.sleep(rate_limit_wait)
         
         # WebSocket disconnection errors
